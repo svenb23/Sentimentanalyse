@@ -1,0 +1,36 @@
+experiment_name: "unigrams_only"
+
+data:
+  categories:
+    - "Automotive"
+    - "Pet_Supplies"
+    - "Video_Games"
+  samples_per_category: 10000
+  test_size: 0.15
+  val_size: 0.15
+
+preprocessing:
+  lowercase: true
+  remove_html: true
+  remove_urls: true
+  remove_numbers: true
+  remove_punctuation: true
+  remove_stopwords: true
+  stemming: false
+  lemmatization: true
+  min_token_length: 2
+
+features:
+  type: "tfidf"
+  max_features: 10000
+  ngram_range: [1, 1]
+  min_df: 2
+  max_df: 0.95
+  sublinear_tf: false
+  use_idf: true
+
+model:
+  type: "logistic_regression"
+  params:
+    max_iter: 1000
+    C: 1.0

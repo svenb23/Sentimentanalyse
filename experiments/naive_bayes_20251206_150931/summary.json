@@ -1,0 +1,8 @@
+{
+  "experiment_id": "naive_bayes_20251206_150931",
+  "model": "naive_bayes",
+  "val_accuracy": 0.7142222222222222,
+  "test_accuracy": 0.7217777777777777,
+  "test_f1_macro": 0.4762820265674173,
+  "features": 10000
+}

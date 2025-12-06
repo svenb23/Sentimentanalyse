@@ -1,0 +1,8 @@
+{
+  "experiment_id": "svm_linear_20251206_151006",
+  "model": "svm",
+  "val_accuracy": 0.7415555555555555,
+  "test_accuracy": 0.736,
+  "test_f1_macro": 0.4740572125984327,
+  "features": 10000
+}
