@@ -1,0 +1,8 @@
+{
+  "experiment_id": "baseline_20251206_153404",
+  "model": "logistic_regression",
+  "val_accuracy": 0.7653777777777778,
+  "test_accuracy": 0.7666222222222222,
+  "test_f1_macro": 0.5073014168793731,
+  "features": 10000
+}

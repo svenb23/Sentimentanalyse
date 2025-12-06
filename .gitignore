@@ -30,3 +30,6 @@ models/
 *.pkl
 *.h5
 *.model
+*.joblib
+experiments/*/model.joblib
+experiments/*/vectorizer.joblib

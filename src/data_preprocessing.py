@@ -100,7 +100,7 @@ def save_data(train_df, val_df, test_df):
 
 
 if __name__ == "__main__":
-    df = load_all_data(sample_size_per_category=10000)
+    df = load_all_data(sample_size_per_category=50000)
 
     train_df, val_df, test_df = split_data(df)
 
