@@ -1,0 +1,8 @@
+{
+  "experiment_id": "high_features_20251206_170827",
+  "model": "logistic_regression",
+  "val_accuracy": 0.7680444444444444,
+  "test_accuracy": 0.7676888888888889,
+  "test_f1_macro": 0.507512335440228,
+  "features": 20000
+}

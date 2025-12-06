@@ -1,0 +1,8 @@
+{
+  "experiment_id": "unigrams_only_20251206_171352",
+  "model": "logistic_regression",
+  "val_accuracy": 0.7590222222222223,
+  "test_accuracy": 0.7589777777777778,
+  "test_f1_macro": 0.4895497655964881,
+  "features": 10000
+}

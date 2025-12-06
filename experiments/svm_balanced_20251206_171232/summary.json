@@ -1,0 +1,8 @@
+{
+  "experiment_id": "svm_balanced_20251206_171232",
+  "model": "svm",
+  "val_accuracy": 0.7152,
+  "test_accuracy": 0.7193777777777778,
+  "test_f1_macro": 0.5038010145632895,
+  "features": 10000
+}

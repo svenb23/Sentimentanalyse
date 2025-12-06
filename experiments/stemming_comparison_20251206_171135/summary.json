@@ -1,0 +1,8 @@
+{
+  "experiment_id": "stemming_comparison_20251206_171135",
+  "model": "logistic_regression",
+  "val_accuracy": 0.7637777777777778,
+  "test_accuracy": 0.7661333333333333,
+  "test_f1_macro": 0.5065150561926248,
+  "features": 10000
+}

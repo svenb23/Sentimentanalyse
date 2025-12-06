@@ -1,0 +1,8 @@
+{
+  "experiment_id": "random_forest_20251206_170954",
+  "model": "random_forest",
+  "val_accuracy": 0.7135555555555556,
+  "test_accuracy": 0.7175111111111111,
+  "test_f1_macro": 0.38369930512958794,
+  "features": 5000
+}
