@@ -1,0 +1,14 @@
+{
+  "experiment_id": "sentiment_sentiment_baseline_20251207_100958",
+  "type": "sentiment_polarity",
+  "classes": [
+    "negativ",
+    "neutral",
+    "positiv"
+  ],
+  "model": "logistic_regression",
+  "val_accuracy": 0.8790222222222223,
+  "test_accuracy": 0.8833333333333333,
+  "test_f1_macro": 0.6694229873380019,
+  "features": 10000
+}
