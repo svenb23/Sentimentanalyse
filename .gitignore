@@ -33,3 +33,6 @@ models/
 *.joblib
 experiments/*/model.joblib
 experiments/*/vectorizer.joblib
+experiments/*/checkpoint-*/
+experiments/*/model/*.safetensors
+*.safetensors
