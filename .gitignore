@@ -36,3 +36,20 @@ experiments/*/vectorizer.joblib
 experiments/*/checkpoint-*/
 experiments/*/model/*.safetensors
 *.safetensors
+
+# LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.run.xml
+*-blx.bib
+*.bcf-SAVE-ERROR
+*.bbl-SAVE-ERROR
