@@ -53,3 +53,6 @@ experiments/*/model/*.safetensors
 *-blx.bib
 *.bcf-SAVE-ERROR
 *.bbl-SAVE-ERROR
+report/CV.pdf
+report/CV.text
+report/PL.pdf
