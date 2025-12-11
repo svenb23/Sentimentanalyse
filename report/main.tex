@@ -138,6 +138,54 @@
 \setcounter{page}{1}
 
 \section{Einleitung}
+Durch die zunehmende Digitalisierung werden Benutzerbewertungen sowohl zur Beurteilung
+von Produkten als auch in sozialen Medien immer wichtiger, sowohl für Kunden, um einen
+schnellen Überblick zu bekommen, als auch für Unternehmen, um Feedback systematisch auszuwerten.
+So werden täglich Millionen von Nutzermeinungen erzeugt, deren manuelle Analyse
+längst nicht mehr praktikabel ist. Die automatisierte
+Sentimentanalyse von Produktrezensionen stellt dabei eine zentrale Herausforderung
+im Bereich des Natural Language Processing dar, deren Bewältigung für Unternehmen
+maßgeblich zur Produktverbesserung und Kundenzufriedenheitsanalyse beiträgt.
+Vor diesem Hintergrund wurde im Rahmen des Moduls „Projekt: NLP" an der IU
+Internationalen Hochschule ein umfassendes System zur Sentimentanalyse von
+Amazon-Produktbewertungen entwickelt, das sowohl klassische
+Machine-Learning-Verfahren als auch moderne Transformer-Architekturen systematisch
+vergleicht.
+
+Das primäre Projektziel bestand in der Entwicklung und dem Vergleich verschiedener
+Klassifikationsansätze zur automatischen Sentiment-Erkennung aus englischsprachigen
+Produktrezensionen. Die zentrale Forschungsfrage konzentrierte sich darauf, wie sich
+traditionelle Machine-Learning-Verfahren, mit Modellen wie Logistic Regression gegenüber
+modernen vortrainierten Sprachmodellen wie DistilBERT hinsichtlich
+Klassifikationsgenauigkeit und Praxistauglichkeit verhalten.
+
+Die Datenbasis bildeten Amazon-Produktrezensionen aus drei Kategorien, Automotive,
+Pet Supplies und Video Games, mit insgesamt 150.000 Datensätzen, die stratifiziert
+in Trainings- (70\%), Validierungs- (15\%) und Testdaten (15\%) aufgeteilt wurden.
+Jede Rezension umfasst Titel, Text und eine Sternebewertung von 1 bis 5, wobei
+sowohl eine 5-Klassen-Klassifikation als auch eine aggregierte 
+3-Klassen-Sentimentanalyse (negativ, neutral, positiv) untersucht wurden.
+
+Die methodische Vorgehensweise gliederte sich in mehrere aufeinander aufbauende
+Phasen. Nach einer initialen Datenaufbereitung mit Textbereinigung,
+Lemmatisierung und Stopwort-Entfernung erfolgte zunächst die Implementierung
+klassischer Modelle unter Verwendung von TF-IDF-Vektorisierung mit
+bis zu 20.000 Features. Hierbei wurden Logistic Regression, Naive Bayes, SVM,
+Random Forest und Gradient Boosting systematisch evaluiert. Parallel dazu wurde 
+ein Fine-Tuning des DistilBERT-Modells auf dem vollständigen Trainingsdatensatz 
+durchgeführt sowie ein vortrainiertes BERT-Modell für Sentimentanalyse im 
+Zero-Shot-Modus getestet.
+
+Der vorliegende Projektbericht dokumentiert systematisch den gesamten
+Entwicklungsprozess. Nach dieser Einleitung folgt die detaillierte Beschreibung 
+der Methodik, einschließlich der Datenaufbereitung sowie der 
+Modellauswahl und -konfiguration. Anschließend werden die Trainingsabläufe und 
+deren Ergebnisse ausführlich dargestellt, wobei das beste Modell (DistilBERT)
+eine Testgenauigkeit von 80,91\% erreichte, während die klassische Logistic
+Regression mit 76,66\% konkurrenzfähige Referenzleistung erzielte.
+Abschließend werden die gewonnenen Erkenntnisse in einem Fazit zusammengefasst
+und kritisch reflektiert.
+
 
 \section{Hauptteil}
 
