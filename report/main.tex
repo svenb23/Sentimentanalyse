@@ -188,13 +188,26 @@ und kritisch reflektiert.
 
 
 \section{Hauptteil}
-\subsection{Hardwareauswahl} 
+\subsection{Hardwareauswahl}
+Zu Projektbeginn standen drei Alternativen zur Verfügung: ein MacBook Pro mit Apple-M2-Chip,
+ein Windows-PC mit NVIDIA RTX 3060 sowie verschiedene Cloud-Computing-Anbieter.
+
+Für das Training der klassischen Machine-Learning-Modelle wie Logistic Regression,
+Naive Bayes und SVM war sowohl das MacBook als auch der Windows-PC ausreichend,
+da diese Verfahren primär CPU-basiert arbeiten. Für das Fine-Tuning der BERT-Modelle
+schied das MacBook jedoch aufgrund der fehlenden CUDA-Unterstützung aus.
+
+Das Training wurde daher auf dem Windows-11-Computer (Intel i7-12700K, 32 GB DDR5,
+NVIDIA RTX 3060 mit 12 GB VRAM) durchgeführt. Da selbst das längste Training
+(DistilBERT auf 105.000 Samples) mit etwa zwei Tagen in einem akzeptablen Rahmen blieb,
+waren zusätzliche Cloud-Lösungen nicht erforderlich. 
+
 \subsection{Projektumgebung einrichten}  
 \subsection{Datenbeschaffung}  
 \subsection{Modellauswahl}
 \subsubsection{Evaluierung der Modellarchitekturen}
 \subsubsection{Iterative Modellentwicklung}
-
+\subsection{Trainingslaufe}
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
