@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
+import torch
 
 from transformers import (
     DistilBertTokenizer,
@@ -21,10 +22,10 @@ PROCESSED_DATA_DIR = BASE_DIR / "data" / "processed"
 EXPERIMENTS_DIR = BASE_DIR / "experiments"
 
 
-def load_data(sample_size=10000):
-    train_df = pd.read_csv(PROCESSED_DATA_DIR / "train.csv").sample(n=sample_size, random_state=42)
-    val_df = pd.read_csv(PROCESSED_DATA_DIR / "val.csv").sample(n=min(2000, len(pd.read_csv(PROCESSED_DATA_DIR / "val.csv"))), random_state=42)
-    test_df = pd.read_csv(PROCESSED_DATA_DIR / "test.csv").sample(n=min(2000, len(pd.read_csv(PROCESSED_DATA_DIR / "test.csv"))), random_state=42)
+def load_data():
+    train_df = pd.read_csv(PROCESSED_DATA_DIR / "train.csv")
+    val_df = pd.read_csv(PROCESSED_DATA_DIR / "val.csv")
+    test_df = pd.read_csv(PROCESSED_DATA_DIR / "test.csv")
     return train_df, val_df, test_df
 
 
@@ -44,10 +45,15 @@ def compute_metrics(eval_pred):
 
 
 def main():
-    experiment_dir = EXPERIMENTS_DIR / f"bert_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    print(f"CUDA available: {torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"GPU: {torch.cuda.get_device_name(0)}")
+
+    experiment_dir = EXPERIMENTS_DIR / f"bert_full_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     experiment_dir.mkdir(parents=True, exist_ok=True)
 
     train_df, val_df, test_df = load_data()
+    print(f"Train: {len(train_df)} | Val: {len(val_df)} | Test: {len(test_df)}")
 
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=5)
@@ -60,15 +66,19 @@ def main():
         model=model,
         args=TrainingArguments(
             output_dir=str(experiment_dir),
-            num_train_epochs=3,
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=32,
+            num_train_epochs=5,
+            per_device_train_batch_size=32,
+            per_device_eval_batch_size=64,
             learning_rate=2e-5,
+            weight_decay=0.01,
+            warmup_ratio=0.1,
             eval_strategy="epoch",
             save_strategy="epoch",
             load_best_model_at_end=True,
             metric_for_best_model="f1_macro",
-            report_to="none"
+            fp16=torch.cuda.is_available(),
+            report_to="none",
+            logging_steps=100
         ),
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
@@ -96,6 +106,7 @@ def main():
         json.dump({'accuracy': results['eval_accuracy'], 'f1_macro': results['eval_f1_macro']}, f, indent=2)
 
     trainer.save_model(experiment_dir / "model")
+    print(f"\nResults saved to: {experiment_dir}")
 
 
 if __name__ == "__main__":
