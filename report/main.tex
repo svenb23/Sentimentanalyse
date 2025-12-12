@@ -208,7 +208,22 @@ arbeitet, ermöglicht GitHub eine nachvollziehbare Versionsverwaltung und ein ei
 auf frühere Stände. Anschließend wurde eine grundlegende Verzeichnisstruktur erstellt und mit
 \texttt{venv} eine virtuelle Umgebung eingerichtet, in der zentrale Bibliotheken installiert wurden.
 
-\subsection{Datenbeschaffung}  
+\subsection{Datenbeschaffung}
+Als Datenquelle diente der Amazon Reviews 2023 Datensatz \cite{hou2024bridging}, der über 500 Millionen
+Produktbewertungen aus verschiedenen Kategorien umfasst und für akademische Forschungszwecke frei verfügbar ist.
+
+Bei der Auswahl der Kategorien wurden zunächst kleinere Kategorien wie Gift Cards in Betracht gezogen.
+Diese erwiesen sich jedoch als ungeeignet, da die zugehörigen Rezensionen häufig nur aus sehr kurzen Texten wie
+„gut" oder „schnelle Lieferung" bestanden, die für eine aussagekräftige Sentimentanalyse nicht ausreichend sind.
+
+Stattdessen wurden die Kategorien Automotive, Pet Supplies und Video Games ausgewählt. Diese Kategorien zeichnen
+sich durch ausführlichere Rezensionen aus, in denen Nutzer ihre Erfahrungen detailliert beschreiben. Zudem repräsentieren
+sie unterschiedliche Produkttypen, wodurch die Generalisierungsfähigkeit der trainierten Modelle besser evaluiert werden kann.
+
+Aus jeder Kategorie wurden jeweils 50.000 Rezensionen entnommen, sodass ein balancierter Gesamtdatensatz von 150.000
+Datensätzen entstand. Die Daten wurden stratifiziert nach Sternebewertung in Trainings- (70\%), Validierungs- (15\%)
+und Testdaten (15\%) aufgeteilt.
+
 \subsection{Modellauswahl}
 \subsubsection{Evaluierung der Modellarchitekturen}
 \subsubsection{Iterative Modellentwicklung}
