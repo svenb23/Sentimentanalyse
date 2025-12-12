@@ -225,9 +225,37 @@ Datensätzen entstand. Die Daten wurden stratifiziert nach Sternebewertung in Tr
 und Testdaten (15\%) aufgeteilt.
 
 \subsection{Modellauswahl}
-\subsubsection{Evaluierung der Modellarchitekturen}
-\subsubsection{Iterative Modellentwicklung}
-\subsection{Trainingslaufe}
+Um einen fundierten Vergleich zwischen klassische Machine-Learning-Verfahren und Transformer-basierte Sprachmodelle zu ermöglichen,
+wurden folgende Modelle evaluiert.
+
+\subsubsection{Klassische Machine-Learning-Modelle}
+Als Baseline dienten etablierte Klassifikationsverfahren in Kombination mit TF-IDF-Vektorisierung.
+Die Term Frequency-Inverse Document Frequency (TF-IDF) transformiert Texte in numerische Vektoren, wobei häufig vorkommende,
+aber wenig aussagekräftige Wörter herabgewichtet werden.
+
+Folgende Modelle wurden implementiert und evaluiert:
+\begin{itemize}
+    \item \textbf{Logistic Regression}: Bei der logistischen Regression wird eine S-förmige logistische Funktion (Sigmoidfunktion) an die Daten gefittet, wobei der Ausgabewert die Wahrscheinlichkeit einer bestimmten Klassenzugehörigkeit ausdrückt \parencite{iu2025supervised}.
+    \item \textbf{Naive Bayes}: Dieser Klassifikator beruht auf dem Satz von Bayes und geht von der Annahme aus, dass die Verteilungen der berücksichtigten Merkmale voneinander unabhängig sind \parencite{iu2025supervised}.
+    \item \textbf{Support Vector Machine (LinearSVC)}: Das Verfahren basiert auf der Einpassung einer Klassifizierungsgrenze (Hyperebene) in den hochdimensionalen Feature-Raum, wobei neue Beobachtungen je nach Position relativ zur Hyperebene klassifiziert werden \parencite{iu2025supervised}.
+    \item \textbf{Random Forest}: Diese Ensemble-Methode bündelt einzelne Entscheidungsbäume durch Bagging zu einem starken Schätzer, dessen Vorhersage durch Aggregation der Einzelvorhersagen ermittelt wird \parencite{iu2025supervised}.
+    \item \textbf{Gradient Boosting}: Im Gegensatz zu Random Forest erfolgt das Training der Entscheidungsbäume sequenziell, wobei jeder Schätzer die Fehler des vorherigen korrigiert \parencite{iu2025supervised}.
+\end{itemize}
+
+Die TF-IDF-Vektorisierung wurde mit bis zu 20.000 Features und Uni- sowie Bigrammen konfiguriert. Zusätzlich wurde eine Textvorverarbeitung mit Kleinschreibung, Entfernung von HTML-Tags, URLs und Sonderzeichen sowie Lemmatisierung durchgeführt.
+
+\subsubsection{Transformer-basierte Modelle}
+Für den Vergleich mit modernen Deep-Learning-Ansätzen wurden zwei BERT-basierte Modelle ausgewählt:
+
+\textbf{DistilBERT} \cite{sanh2019distilbert} ist eine komprimierte Version des ursprünglichen BERT-Modells \cite{devlin2018bert},
+die durch Knowledge Distillation erzeugt wurde. Mit 66 Millionen Parametern ist DistilBERT etwa 40\% kleiner als BERT, behält jedoch 97\%
+der Sprachverständnisfähigkeiten bei. Diese Eigenschaften machen DistilBERT besonders geeignet für Projekte mit begrenzten Hardwareressourcen.
+
+Als zweiter Ansatz wurde ein \textbf{vortrainiertes BERT-Modell für Sentimentanalyse} (nlptown/bert-base-multilingual-uncased-sentiment)
+im Zero-Shot-Modus getestet. Dieses Modell wurde bereits auf Produktbewertungen trainiert und ermöglicht eine Klassifikation
+ohne zusätzliches Fine-Tuning auf dem eigenen Datensatz.
+
+\subsection{Trainingsläufe}
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
