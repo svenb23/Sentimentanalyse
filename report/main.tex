@@ -255,8 +255,40 @@ Als zweiter Ansatz wurde ein \textbf{vortrainiertes BERT-Modell für Sentimentan
 im Zero-Shot-Modus getestet. Dieses Modell wurde bereits auf Produktbewertungen trainiert und ermöglicht eine Klassifikation
 ohne zusätzliches Fine-Tuning auf dem eigenen Datensatz.
 
-\subsection{Trainingsläufe}
+\subsection{Datenaufbereitung}
+\subsubsection{Datensatzstruktur}
+In einem ersten Schritt wurden die Rohdaten untersucht und ihre Struktur analysiert.
+Die Rezensionen liegen im JSONL-Format vor, wobei jede Zeile einen JSON-Datensatz
+repräsentiert. \Cref{tab:json_fields} zeigt die verfügbaren Felder und ihre Bedeutung.
 
+\begin{table}[h]
+\centering
+\caption{Struktur der Amazon-Rezensionsdaten im JSONL-Format}
+\label{tab:json_fields}
+\begin{tabular}{llp{5.5cm}}
+\toprule
+\textbf{Feld} & \textbf{Beschreibung} & \textbf{Beispiel} \\
+\midrule
+rating & Sternebewertung (1.0--5.0) & 5.0 \\
+title & Titel der Rezension & „Great product!'' \\
+text & Ausführlicher Rezensionstext &  „Item came as described...'' \\
+images & Angehängte Bilder & {[}{]} \\
+asin & Amazon Produkt-ID & B01LZA8SGZ \\
+parent\_asin & Übergeordnete Produkt-ID & B0BV88374L \\
+user\_id & Anonymisierte Benutzer-ID & AGXVBIUFLFGMV... \\
+timestamp & Unix-Zeitstempel & 1513092936205 \\
+helpful\_vote & Anzahl hilfreicher Stimmen & 0 \\
+verified\_purchase & Verifizierter Kauf & true \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Die Felder \texttt{title} und \texttt{text} wurden zu einem
+zusammenhängenden Eingabetext (X) kombiniert, während das Feld \texttt{rating} als Zielklasse (y)
+mit Werten von 1 bis 5 Sternen dient. Zusätzlich wurde die Produktkategorie gespeichert,
+um kategoriespezifische Evaluationen zu ermöglichen.
+
+Anschließend erfolgte die Aufteilung der Daten in 70\% Trainings-, 15\% Validierungs- und 15\% Testdaten.
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
