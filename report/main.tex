@@ -361,6 +361,61 @@ Als zweiter Ansatz wurde ein \textbf{vortrainiertes BERT-Modell für Sentimentan
 im Zero-Shot-Modus getestet. Dieses Modell wurde bereits auf Produktbewertungen trainiert und ermöglicht eine Klassifikation
 ohne zusätzliches Fine-Tuning auf dem eigenen Datensatz.
 
+\subsection{Training}
+\subsubsection{Erstes Training der klassischen Modelle}
+Das initiale Training erfolgte mit drei klassischen Modellen:
+Logistic Regression, Multinomial Naive Bayes und LinearSVC. Das Modell mit der höchsten
+Validierungsgenauigkeit wurde automatisch ausgewählt und auf dem Testdatensatz evaluiert.
+
+Die Evaluation umfasste Accuracy, Classification Report und Confusion Matrix. Das beste Modell
+wurde abschließend gespeichert.
+
+\paragraph{Ergebnisse und Problemanalyse}
+Die initiale Evaluation zeigte eine deutliche Asymmetrie in der Klassifikationsleistung.
+Während 5-Sterne-Bewertungen mit einem Recall von 97\% und einer Precision von 78\% zuverlässig
+erkannt wurden, offenbarten die mittleren Klassen erhebliche Schwächen.
+
+\begin{table}[H]
+\centering
+\caption{Recall-Werte der mittleren Bewertungsklassen im ersten Training}
+\label{tab:first_training_recall}
+\begin{tabular}{lcl}
+\toprule
+\textbf{Bewertung} & \textbf{Recall} & \textbf{Korrekt erkannt} \\
+\midrule
+2 Sterne & 10\% & 24 von 230 \\
+3 Sterne & 16\% & 49 von 298 \\
+4 Sterne & 20\% & 105 von 528 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Die Confusion Matrix in \Cref{tab:confusion_first} verdeutlicht das Kernproblem: Das Modell
+tendierte dazu, Rezensionen aller Klassen als 5-Sterne-Bewertungen zu klassifizieren.
+So wurden beispielsweise 163 der 1-Stern-Bewertungen fälschlicherweise als 5 Sterne eingestuft,
+bei 4-Stern-Bewertungen waren es sogar 381 von 528.
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix des ersten Trainings}
+\label{tab:confusion_first}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 370 & 3 & 10 & 10 & 163 \\
+2 Sterne & 82 & 24 & 23 & 19 & 82 \\
+3 Sterne & 55 & 8 & 49 & 34 & 152 \\
+4 Sterne & 25 & 2 & 15 & 105 & 381 \\
+5 Sterne & 37 & 2 & 12 & 41 & 2796 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{}
+
+
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
