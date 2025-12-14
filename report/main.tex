@@ -7,6 +7,7 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{amsmath}
+\usepackage{float}
 
 \usepackage[scaled]{helvet}
 \renewcommand{\familydefault}{\sfdefault}
@@ -221,8 +222,113 @@ sich durch ausführlichere Rezensionen aus, in denen Nutzer ihre Erfahrungen det
 sie unterschiedliche Produkttypen, wodurch die Generalisierungsfähigkeit der trainierten Modelle besser evaluiert werden kann.
 
 Aus jeder Kategorie wurden jeweils 50.000 Rezensionen entnommen, sodass ein balancierter Gesamtdatensatz von 150.000
-Datensätzen entstand. Die Daten wurden stratifiziert nach Sternebewertung in Trainings- (70\%), Validierungs- (15\%)
-und Testdaten (15\%) aufgeteilt.
+Datensätzen entstand.
+
+\subsection{Datenanalyse}
+\subsubsection{Datensatzstruktur}
+In einem ersten Schritt wurden die Rohdaten untersucht und ihre Struktur analysiert.
+Die Rezensionen liegen im JSONL-Format vor, wobei jede Zeile einen JSON-Datensatz
+repräsentiert. \Cref{tab:json_fields} zeigt die verfügbaren Felder und ihre Bedeutung.
+
+\begin{table}[H]
+\centering
+\caption{Struktur der Amazon-Rezensionsdaten im JSONL-Format}
+\label{tab:json_fields}
+\begin{tabular}{llp{5.5cm}}
+\toprule
+\textbf{Feld} & \textbf{Beschreibung} & \textbf{Beispiel} \\
+\midrule
+rating & Sternebewertung (1.0--5.0) & 5.0 \\
+title & Titel der Rezension & „Great product!'' \\
+text & Ausführlicher Rezensionstext &  „Item came as described...'' \\
+images & Angehängte Bilder & {[}{]} \\
+asin & Amazon Produkt-ID & B01LZA8SGZ \\
+parent\_asin & Übergeordnete Produkt-ID & B0BV88374L \\
+user\_id & Anonymisierte Benutzer-ID & AGXVBIUFLFGMV... \\
+timestamp & Unix-Zeitstempel & 1513092936205 \\
+helpful\_vote & Anzahl hilfreicher Stimmen & 0 \\
+verified\_purchase & Verifizierter Kauf & true \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Die Felder \texttt{title} und \texttt{text} wurden zu einem
+zusammenhängenden Eingabetext (X) kombiniert, während das Feld \texttt{rating} als Zielklasse (y)
+mit Werten von 1 bis 5 Sternen dient. Zusätzlich wurde die Produktkategorie gespeichert,
+um kategoriespezifische Evaluationen zu ermöglichen.
+
+Anschließend erfolgte die Aufteilung der Daten in 70\% Trainings-, 15\% Validierungs- und 15\% Testdaten.
+
+\subsection{Vorverarbeitungs-Pipeline}
+Die folgenden Ausführungen zur Textvorverarbeitung und Feature-Extraktion orientieren sich
+an den Grundlagen aus \textcite[S.~62--78]{schaaff2025nlp}.
+
+Die Textvorverarbeitung bildet einen entscheidenden Schritt zur Vorbereitung der Rohtexte
+für die maschinelle Verarbeitung. Ziel ist es, Rauschen zu reduzieren und die relevanten
+sprachlichen Merkmale zu extrahieren.
+
+\subsubsection{Textbereinigung und Normalisierung}
+Die implementierte Pipeline verarbeitet jeden Rezensionstext in mehreren aufeinander
+aufbauenden Schritten:
+
+\begin{enumerate}
+    \item \textbf{Textkombination}: Zusammenführung von \texttt{title} und \texttt{text} zu einem Eingabestring
+    \item \textbf{Kleinschreibung}: Konvertierung aller Zeichen zu Kleinbuchstaben zur Vereinheitlichung
+    \item \textbf{HTML-Bereinigung}: Entfernung von HTML-Tags mittels regulärer Ausdrücke
+    \item \textbf{URL-Entfernung}: Filterung von Weblinks, die keine semantische Relevanz besitzen
+    \item \textbf{Zahlenentfernung}: Eliminierung numerischer Werte
+    \item \textbf{Satzzeichenentfernung}: Entfernung aller Interpunktionszeichen
+    \item \textbf{Tokenisierung}: Zerlegung des Textes in einzelne Wörter mittels NLTK
+    \item \textbf{Stoppwort-Filterung}: Entfernung häufiger englischer Funktionswörter (the, is, at, ...)
+    \item \textbf{Lemmatisierung}: Rückführung der Wörter auf ihre Grundform mittels WordNetLemmatizer
+    \item \textbf{Längenfilterung}: Entfernung von Tokens mit weniger als 2 Zeichen
+\end{enumerate}
+
+\subsubsection{Feature-Extraktion}
+Für die Transformation der vorverarbeiteten Texte in numerische Vektoren stehen verschiedene
+Methoden zur Verfügung. \Cref{tab:feature_methods} vergleicht die gängigsten Ansätze.
+
+\begin{table}[H]
+\centering
+\caption{Vergleich der Feature-Extraktionsmethoden}
+\label{tab:feature_methods}
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{Methode} & \textbf{Vorteile} & \textbf{Nachteile} \\
+\midrule
+Bag of Words & Einfach, schnell, interpretierbar & Ignoriert Worthäufigkeit im Korpus, große sparse Matrizen \\
+TF-IDF & Gewichtet wichtige Wörter höher, reduziert Rauschen, bewährt für Klassifikation & Ignoriert Wortkontext und -reihenfolge \\
+Word2Vec / GloVe & Erfasst semantische Ähnlichkeit, dichte Vektoren & Benötigt viele Trainingsdaten, schwerer interpretierbar \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Für die klassischen Machine-Learning-Modelle wurde \textbf{TF-IDF} (Term Frequency-Inverse
+Document Frequency) gewählt. Diese Entscheidung basiert auf mehreren Faktoren: TF-IDF
+ist für Sentiment-Klassifikation bewährt, ermöglicht schnelles Training ohne GPU und
+bietet Interpretierbarkeit, es lässt sich nachvollziehen, welche Wörter zur Klassifikation
+beitragen. 
+
+\begin{table}[H]
+\centering
+\caption{Konfiguration der TF-IDF-Vektorisierung}
+\label{tab:tfidf_config}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Wert} & \textbf{Beschreibung} \\
+\midrule
+max\_features & 10.000 & Maximale Anzahl der Features \\
+ngram\_range & (1, 2) & Uni- und Bigramme \\
+min\_df & 2 & Term muss in mind. 2 Dokumenten vorkommen \\
+max\_df & 0,95 & Term darf in max. 95\% der Dokumente vorkommen \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Die Verwendung von Bigrammen ermöglicht die Erfassung von Wortpaaren wie „not good''
+oder „very bad'', die für die Sentimentanalyse besonders relevant sind, da sie
+Negationen und Verstärkungen berücksichtigen.
+
 
 \subsection{Modellauswahl}
 Um einen fundierten Vergleich zwischen klassische Machine-Learning-Verfahren und Transformer-basierte Sprachmodelle zu ermöglichen,
@@ -255,40 +361,6 @@ Als zweiter Ansatz wurde ein \textbf{vortrainiertes BERT-Modell für Sentimentan
 im Zero-Shot-Modus getestet. Dieses Modell wurde bereits auf Produktbewertungen trainiert und ermöglicht eine Klassifikation
 ohne zusätzliches Fine-Tuning auf dem eigenen Datensatz.
 
-\subsection{Datenaufbereitung}
-\subsubsection{Datensatzstruktur}
-In einem ersten Schritt wurden die Rohdaten untersucht und ihre Struktur analysiert.
-Die Rezensionen liegen im JSONL-Format vor, wobei jede Zeile einen JSON-Datensatz
-repräsentiert. \Cref{tab:json_fields} zeigt die verfügbaren Felder und ihre Bedeutung.
-
-\begin{table}[h]
-\centering
-\caption{Struktur der Amazon-Rezensionsdaten im JSONL-Format}
-\label{tab:json_fields}
-\begin{tabular}{llp{5.5cm}}
-\toprule
-\textbf{Feld} & \textbf{Beschreibung} & \textbf{Beispiel} \\
-\midrule
-rating & Sternebewertung (1.0--5.0) & 5.0 \\
-title & Titel der Rezension & „Great product!'' \\
-text & Ausführlicher Rezensionstext &  „Item came as described...'' \\
-images & Angehängte Bilder & {[}{]} \\
-asin & Amazon Produkt-ID & B01LZA8SGZ \\
-parent\_asin & Übergeordnete Produkt-ID & B0BV88374L \\
-user\_id & Anonymisierte Benutzer-ID & AGXVBIUFLFGMV... \\
-timestamp & Unix-Zeitstempel & 1513092936205 \\
-helpful\_vote & Anzahl hilfreicher Stimmen & 0 \\
-verified\_purchase & Verifizierter Kauf & true \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Die Felder \texttt{title} und \texttt{text} wurden zu einem
-zusammenhängenden Eingabetext (X) kombiniert, während das Feld \texttt{rating} als Zielklasse (y)
-mit Werten von 1 bis 5 Sternen dient. Zusätzlich wurde die Produktkategorie gespeichert,
-um kategoriespezifische Evaluationen zu ermöglichen.
-
-Anschließend erfolgte die Aufteilung der Daten in 70\% Trainings-, 15\% Validierungs- und 15\% Testdaten.
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
