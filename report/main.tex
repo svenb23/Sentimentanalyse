@@ -374,28 +374,11 @@ Die initiale Evaluation zeigte eine deutliche Asymmetrie in der Klassifikationsl
 Während 5-Sterne-Bewertungen mit einem Recall von 97\% und einer Precision von 78\% zuverlässig
 erkannt wurden, offenbarten die mittleren Klassen erhebliche Schwächen.
 
-Die Confusion Matrix in \Cref{tab:confusion_first} verdeutlicht das Kernproblem: Das Modell
-tendierte dazu, Rezensionen aller Klassen als 5-Sterne-Bewertungen zu klassifizieren.
-So wurden beispielsweise 163 der 1-Stern-Bewertungen fälschlicherweise als 5 Sterne eingestuft,
-bei 4-Stern-Bewertungen waren es sogar 381 von 528.
-
-\begin{table}[H]
-\centering
-\caption{Confusion Matrix des ersten Trainings}
-\label{tab:confusion_first}
-\begin{tabular}{l|ccccc}
-\toprule
-& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
-\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
-\midrule
-1 Stern & 370 & 3 & 10 & 10 & 163 \\
-2 Sterne & 82 & 24 & 23 & 19 & 82 \\
-3 Sterne & 55 & 8 & 49 & 34 & 152 \\
-4 Sterne & 25 & 2 & 15 & 105 & 381 \\
-5 Sterne & 37 & 2 & 12 & 41 & 2796 \\
-\bottomrule
-\end{tabular}
-\end{table}
+Die Confusion Matrix (siehe \Cref{tab:confusion_first} im Anhang) verdeutlicht
+das Kernproblem: Das Modell tendierte dazu, Rezensionen aller Klassen als
+5-Sterne-Bewertungen zu klassifizieren. So wurden beispielsweise 163 der
+1-Stern-Bewertungen fälschlicherweise als 5 Sterne eingestuft, bei
+4-Stern-Bewertungen waren es sogar 381 von 528.
 
 \subsubsection{Aufbau der Experiment-Pipeline}
 Die Erkenntnisse aus dem ersten Training zeigten, dass systematische
@@ -437,6 +420,28 @@ der verwendeten Konfiguration, aller Metriken, der Confusion Matrix sowie
 des trainierten Modells. Ein zusätzliches Vergleichsskript ermöglicht die
 tabellarische Gegenüberstellung aller durchgeführten Experimente.
 
+\subsubsection{Erstes Training mit 30.000 Datensätzen}
+Mit der implementierten Pipeline wurde ein erstes Training auf einem reduzierten
+Datensatz mit 30.000 Rezensionen durchgeführt. Die detaillierten Ergebnisse
+aller sieben Experimente sind in \Cref{tab:pipeline_results} im Anhang
+aufgeführt. Die Evaluation zeigt, dass Logistic Regression in Kombination mit
+Lemmatisierung und Bigrammen die höchste Accuracy von 74,29\% erreichte.
+Bemerkenswert ist jedoch, dass Naive Bayes und LinearSVC trotz geringerer
+Accuracy bessere F1-Macro-Werte erzielten, was auf eine ausgewogenere
+Klassifikation über alle fünf Klassen hindeutet. Die Confusion Matrizen
+im Anhang (\Cref{tab:confusion_baseline,tab:confusion_nb,tab:confusion_rf})
+verdeutlichen diese Unterschiede: Während Random Forest nahezu alle
+Rezensionen als 5 Sterne klassifiziert, zeigt Naive Bayes eine breitere
+Verteilung über alle Klassen.
+
+Das Hauptproblem aller Modelle bleibt die unbalancierte Klassenverteilung:
+Mit 64\% 5-Sterne-Bewertungen im Datensatz erreichen alle Modelle hohe
+Recall-Werte für die Mehrheitsklasse (bis zu 97\%), während die mittleren
+Klassen (2, 3, 4 Sterne) mit Recall-Werten unter 35\% stark unterrepräsentiert
+bleiben. Die Kategorie Automotive zeigte durchgängig die besten Ergebnisse,
+was auf eindeutigere Sentiment-Signale in dieser Produktkategorie hindeutet.
+
+
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
@@ -454,5 +459,98 @@ tabellarische Gegenüberstellung aller durchgeführten Experimente.
 \appendix
 \section*{Anhang}
 \addcontentsline{toc}{section}{Anhang}
+
+\subsection*{A: Detaillierte Ergebnisse der Trainings}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix des ersten Trainings}
+\label{tab:confusion_first}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 370 & 3 & 10 & 10 & 163 \\
+2 Sterne & 82 & 24 & 23 & 19 & 82 \\
+3 Sterne & 55 & 8 & 49 & 34 & 152 \\
+4 Sterne & 25 & 2 & 15 & 105 & 381 \\
+5 Sterne & 37 & 2 & 12 & 41 & 2796 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vergleich der Pipeline-Experimente (30.000 Datensätze)}
+\label{tab:pipeline_results}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Experiment} & \textbf{Konfiguration} & \textbf{Accuracy} & \textbf{F1 Macro} \\
+\midrule
+baseline & LogReg, Lemma, Bigrams, 10k & 74,29\% & 0,443 \\
+stemming\_comparison & LogReg, Stemming, Bigrams & 74,27\% & 0,442 \\
+high\_features & LogReg, Lemma, Trigrams, 20k & 74,22\% & 0,442 \\
+unigrams\_only & LogReg, Lemma, Unigrams & 73,98\% & 0,439 \\
+svm\_linear & LinearSVC, Lemma, Bigrams & 73,60\% & 0,474 \\
+naive\_bayes & MultinomialNB, Count-Vec & 72,18\% & 0,476 \\
+random\_forest & RandomForest, 5k Features & 70,04\% & 0,337 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Logistic Regression (Baseline, 30k)}
+\label{tab:confusion_baseline}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 368 & 4 & 10 & 10 & 164 \\
+2 Sterne & 81 & 23 & 23 & 18 & 85 \\
+3 Sterne & 55 & 8 & 48 & 34 & 153 \\
+4 Sterne & 25 & 2 & 16 & 106 & 379 \\
+5 Sterne & 36 & 3 & 10 & 41 & 2798 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Naive Bayes (30k)}
+\label{tab:confusion_nb}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 397 & 33 & 33 & 21 & 72 \\
+2 Sterne & 86 & 46 & 37 & 22 & 39 \\
+3 Sterne & 58 & 26 & 67 & 58 & 89 \\
+4 Sterne & 31 & 11 & 50 & 172 & 264 \\
+5 Sterne & 70 & 21 & 50 & 181 & 2566 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Random Forest (30k)}
+\label{tab:confusion_rf}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 200 & 0 & 0 & 0 & 356 \\
+2 Sterne & 25 & 13 & 0 & 0 & 192 \\
+3 Sterne & 15 & 0 & 18 & 0 & 265 \\
+4 Sterne & 9 & 0 & 0 & 46 & 473 \\
+5 Sterne & 10 & 0 & 0 & 3 & 2875 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
