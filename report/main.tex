@@ -441,6 +441,30 @@ Klassen (2, 3, 4 Sterne) mit Recall-Werten unter 35\% stark unterrepräsentiert
 bleiben. Die Kategorie Automotive zeigte durchgängig die besten Ergebnisse,
 was auf eindeutigere Sentiment-Signale in dieser Produktkategorie hindeutet.
 
+\subsubsection{Training mit 150.000 Datensätzen}
+Nach der initialen Evaluation wurde das Training auf den vollständigen Datensatz
+mit 150.000 Rezensionen (105.000 Training, 22.500 Validierung, 22.500 Test)
+ausgeweitet. Die detaillierten Ergebnisse sind in \Cref{tab:pipeline_results_150k}
+im Anhang aufgeführt.
+
+Die Skalierung auf einen 150.000 Datensatz führte zu einer deutlichen
+Verbesserung der Klassifikationsleistung. Logistic Regression mit 20.000 Features
+erreichte die höchste Accuracy von 76,77\%, gefolgt von der Baseline-Konfiguration
+mit 76,66\%. Der F1-Macro-Score verbesserte sich von durchschnittlich 0,44 auf
+etwa 0,51, was auf eine bessere Erkennung der unterrepräsentierten Klassen hindeutet.
+
+\Cref{tab:comparison_30k_150k} im Anhang zeigt den direkten Vergleich zwischen
+beiden Datensatzgrößen. Die Verbesserungen betragen je nach Modell zwischen
+0,58 und 2,55 Prozentpunkten, wobei Logistic Regression am stärksten profitierte.
+Naive Bayes zeigte mit nur 0,58 Prozentpunkten Verbesserung die geringste
+Skalierungseffizienz, was auf die vereinfachenden Annahmen des Modells
+zurückzuführen ist.
+
+Das Klassenungleichgewicht bleibt weiterhin das zentrale Problem: Die mittleren
+Klassen (2, 3, 4 Sterne) erreichen auch mit mehr Trainingsdaten Recall-Werte
+von maximal 37\%, während die 5-Sterne-Klasse konstant bei über 96\% liegt.
+Die Kategorie Automotive erzielte mit etwa 78\% durchgängig die besten Ergebnisse.
+
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
@@ -549,6 +573,98 @@ random\_forest & RandomForest, 5k Features & 70,04\% & 0,337 \\
 3 Sterne & 15 & 0 & 18 & 0 & 265 \\
 4 Sterne & 9 & 0 & 0 & 46 & 473 \\
 5 Sterne & 10 & 0 & 0 & 3 & 2875 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vergleich der Pipeline-Experimente (150.000 Datensätze)}
+\label{tab:pipeline_results_150k}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Experiment} & \textbf{Konfiguration} & \textbf{Accuracy} & \textbf{F1 Macro} \\
+\midrule
+high\_features & LogReg, Lemma, Trigrams, 20k & 76,77\% & 0,508 \\
+baseline & LogReg, Lemma, Bigrams, 10k & 76,66\% & 0,507 \\
+stemming\_comparison & LogReg, Stemming, Bigrams & 76,61\% & 0,507 \\
+svm\_linear & LinearSVC, Lemma, Bigrams & 76,12\% & 0,502 \\
+unigrams\_only & LogReg, Lemma, Unigrams & 75,90\% & 0,490 \\
+naive\_bayes & MultinomialNB, Count-Vec & 72,76\% & 0,508 \\
+random\_forest & RandomForest, 5k Features & 71,75\% & 0,384 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vergleich der Ergebnisse: 30.000 vs. 150.000 Datensätze}
+\label{tab:comparison_30k_150k}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Experiment} & \textbf{Accuracy (30k)} & \textbf{Accuracy (150k)} & \textbf{Differenz} \\
+\midrule
+high\_features & 74,22\% & 76,77\% & +2,55 \\
+baseline & 74,29\% & 76,66\% & +2,37 \\
+stemming\_comparison & 74,27\% & 76,61\% & +2,34 \\
+svm\_linear & 73,60\% & 76,12\% & +2,52 \\
+unigrams\_only & 73,98\% & 75,90\% & +1,92 \\
+naive\_bayes & 72,18\% & 72,76\% & +0,58 \\
+random\_forest & 70,04\% & 71,75\% & +1,71 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Logistic Regression (Baseline, 150k)}
+\label{tab:confusion_baseline_150k}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 2044 & 96 & 79 & 37 & 464 \\
+2 Sterne & 442 & 193 & 124 & 60 & 325 \\
+3 Sterne & 290 & 65 & 392 & 184 & 616 \\
+4 Sterne & 92 & 15 & 122 & 680 & 1733 \\
+5 Sterne & 157 & 15 & 62 & 273 & 13940 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Naive Bayes (150k)}
+\label{tab:confusion_nb_150k}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 1993 & 214 & 148 & 75 & 290 \\
+2 Sterne & 429 & 290 & 178 & 75 & 172 \\
+3 Sterne & 297 & 186 & 469 & 223 & 372 \\
+4 Sterne & 121 & 93 & 265 & 982 & 1181 \\
+5 Sterne & 351 & 164 & 249 & 1045 & 12638 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Random Forest (150k)}
+\label{tab:confusion_rf_150k}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 1214 & 2 & 0 & 2 & 1502 \\
+2 Sterne & 194 & 96 & 1 & 4 & 849 \\
+3 Sterne & 90 & 0 & 150 & 5 & 1302 \\
+4 Sterne & 29 & 0 & 1 & 287 & 2325 \\
+5 Sterne & 47 & 0 & 1 & 2 & 14397 \\
 \bottomrule
 \end{tabular}
 \end{table}
