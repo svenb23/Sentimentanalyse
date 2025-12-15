@@ -465,6 +465,32 @@ Klassen (2, 3, 4 Sterne) erreichen auch mit mehr Trainingsdaten Recall-Werte
 von maximal 37\%, während die 5-Sterne-Klasse konstant bei über 96\% liegt.
 Die Kategorie Automotive erzielte mit etwa 78\% durchgängig die besten Ergebnisse.
 
+\subsubsection{Anpassung der Klassengewichtung}
+Um das Klassenungleichgewicht direkt zu adressieren, wurde die
+\texttt{class\_weight='balanced'}-Option von Scikit-learn evaluiert
+\parencite{pedregosa2011scikit}. Diese Methode gewichtet Trainingsbeispiele
+inversiv proportional zu ihrer Klassenhäufigkeit.
+
+Für den vorliegenden Datensatz resultieren daraus Gewichtungen von etwa 0,31
+für die dominante 5-Sterne-Klasse bis zu 3,92 für die seltene 2-Sterne-Klasse.
+Fehler bei unterrepräsentierten Klassen werden somit bis zu zwölfmal stärker
+bestraft als bei der Mehrheitsklasse.
+
+Die detaillierten Ergebnisse sind in \Cref{tab:balanced_comparison} im Anhang
+aufgeführt. Die Klassengewichtung führte wie erwartet zu einer deutlichen
+Verbesserung der Recall-Werte für die mittleren Klassen: Rating 2 stieg von
+17\% auf 39\%, Rating 3 von 25\% auf 40\% und Rating 4 von 26\% auf 48\%.
+Gleichzeitig sank jedoch der Recall der 5-Sterne-Klasse von 96\% auf 75\%.
+
+Diese Verschiebung resultierte in einer reduzierten Gesamtaccuracy: Logistic
+Regression fiel von 76,66\% auf 66,85\%, da die 5-Sterne-Klasse 64\% der
+Testdaten ausmacht. Der F1-Macro-Score blieb hingegen nahezu konstant
+(50,73\% vs. 50,36\%), was die ausgeglichenere Klassifikation widerspiegelt.
+
+Die Wahl zwischen beiden Ansätzen hängt vom Anwendungsfall ab: Für maximale
+Gesamtgenauigkeit eignet sich das Standardmodell, für eine ausgeglichene
+Erkennung aller Sentiment-Stufen die gewichtete Variante.
+
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
@@ -665,6 +691,92 @@ random\_forest & 70,04\% & 71,75\% & +1,71 \\
 3 Sterne & 90 & 0 & 150 & 5 & 1302 \\
 4 Sterne & 29 & 0 & 1 & 287 & 2325 \\
 5 Sterne & 47 & 0 & 1 & 2 & 14397 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vergleich: Standard vs. Balanced Class Weights}
+\label{tab:balanced_comparison}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Modell} & \textbf{Acc. (normal)} & \textbf{Acc. (balanced)} & \textbf{F1 (normal)} & \textbf{F1 (balanced)} \\
+\midrule
+Logistic Regression & 76,66\% & 66,85\% & 0,507 & 0,504 \\
+SVM (LinearSVC) & 76,12\% & 71,94\% & 0,502 & 0,504 \\
+Random Forest & 71,75\% & 66,98\% & 0,384 & 0,464 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Recall-Vergleich pro Klasse: Standard vs. Balanced (Logistic Regression)}
+\label{tab:recall_comparison}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Rating} & \textbf{Recall (normal)} & \textbf{Recall (balanced)} & \textbf{Differenz} \\
+\midrule
+1 Stern & 75\% & 69\% & -6 \\
+2 Sterne & 17\% & 39\% & +22 \\
+3 Sterne & 25\% & 40\% & +15 \\
+4 Sterne & 26\% & 48\% & +22 \\
+5 Sterne & 96\% & 75\% & -21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Logistic Regression Balanced}
+\label{tab:confusion_logreg_balanced}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 1882 & 481 & 217 & 68 & 72 \\
+2 Sterne & 326 & 446 & 249 & 72 & 51 \\
+3 Sterne & 212 & 323 & 626 & 297 & 89 \\
+4 Sterne & 103 & 168 & 452 & 1258 & 661 \\
+5 Sterne & 413 & 416 & 603 & 2185 & 10830 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- SVM Balanced}
+\label{tab:confusion_svm_balanced}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 1915 & 349 & 219 & 59 & 178 \\
+2 Sterne & 382 & 349 & 232 & 64 & 117 \\
+3 Sterne & 256 & 268 & 548 & 249 & 226 \\
+4 Sterne & 118 & 180 & 371 & 920 & 1053 \\
+5 Sterne & 319 & 322 & 434 & 918 & 12454 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Confusion Matrix -- Random Forest Balanced}
+\label{tab:confusion_rf_balanced}
+\begin{tabular}{l|ccccc}
+\toprule
+& \multicolumn{5}{c}{\textbf{Vorhergesagt}} \\
+\textbf{Tatsächlich} & 1 & 2 & 3 & 4 & 5 \\
+\midrule
+1 Stern & 2269 & 87 & 88 & 114 & 162 \\
+2 Sterne & 548 & 177 & 127 & 144 & 148 \\
+3 Sterne & 425 & 81 & 405 & 357 & 279 \\
+4 Sterne & 296 & 55 & 173 & 1170 & 948 \\
+5 Sterne & 1403 & 131 & 277 & 1587 & 11049 \\
 \bottomrule
 \end{tabular}
 \end{table}
