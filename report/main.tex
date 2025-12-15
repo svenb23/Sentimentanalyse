@@ -397,8 +397,45 @@ bei 4-Stern-Bewertungen waren es sogar 381 von 528.
 \end{tabular}
 \end{table}
 
-\subsubsection{}
+\subsubsection{Aufbau der Experiment-Pipeline}
+Die Erkenntnisse aus dem ersten Training zeigten, dass systematische
+Experimente mit verschiedenen Konfigurationen erforderlich sind.
+Um eine effiziente Durchführung und Vergleichbarkeit zu gewährleisten,
+wurde eine modulare Pipeline-Architektur implementiert, die aus drei
+aufeinander aufbauenden Komponenten besteht.
 
+Die erste Komponente bildet das Preprocessing-Modul, das die
+Rohtexte für die maschinelle Verarbeitung vorbereitet. Folgende
+Verarbeitungsschritte können dabei flexibel aktiviert oder deaktiviert werden:
+Konvertierung zu Kleinbuchstaben, Entfernung von HTML-Tags, URLs, Zahlen
+und Satzzeichen sowie die Filterung englischer Stoppwörter. Für die
+Wortnormalisierung stehen zwei Alternativen zur Verfügung: der Porter Stemmer,
+der Wörter auf ihren Stamm reduziert, sowie der WordNet Lemmatizer, der
+Wörter auf ihre Grundform zurückführt. Zusätzlich kann eine minimale
+Token-Länge definiert werden, um sehr kurze Wortfragmente auszuschließen.
+
+Die zweite Komponente umfasst die Feature-Extraktion, die den
+vorverarbeiteten Text in numerische Vektoren transformiert. Hierbei kann
+zwischen TF-IDF-Vektorisierung und einfacher Count-Vektorisierung (Bag-of-Words)
+gewählt werden. Die Anzahl der Features ist zwischen 5.000 und 20.000
+konfigurierbar. Durch die Einstellung der N-Gramm-Range lassen sich
+ausschließlich Unigramme, zusätzlich Bigramme oder auch Trigramme
+berücksichtigen. Weitere Parameter wie minimale und maximale Dokumentfrequenz,
+sublineare TF-Skalierung sowie die IDF-Gewichtung ermöglichen eine
+Feinabstimmung der Feature-Repräsentation.
+
+Die dritte Komponente stellt das Training-Modul dar, das fünf
+verschiedene Klassifikationsverfahren unterstützt: Logistic Regression,
+Multinomial Naive Bayes, Linear Support Vector Machine, Random Forest
+und Gradient Boosting. Für jedes Modell sind sinnvolle Standardparameter
+hinterlegt, die bei Bedarf überschrieben werden können.
+
+Die gesamte Konfiguration erfolgt über YAML-Dateien, wodurch Experimente
+reproduzierbar dokumentiert werden. Jedes Experiment erhält automatisch
+einen Zeitstempel und speichert alle Ergebnisse strukturiert ab, einschließlich
+der verwendeten Konfiguration, aller Metriken, der Confusion Matrix sowie
+des trainierten Modells. Ein zusätzliches Vergleichsskript ermöglicht die
+tabellarische Gegenüberstellung aller durchgeführten Experimente.
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
