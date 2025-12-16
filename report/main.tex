@@ -516,6 +516,34 @@ Diese gleichmäßige Leistung deutet auf eine gute Generalisierungsfähigkeit
 des Modells hin. Die detaillierten Ergebnisse sind in
 \Cref{tab:sentiment_polarity} im Anhang aufgeführt.
 
+\subsubsection{Neuronale Netze}
+Die Entwicklung eines eigenen neuronalen Netzes wäre möglich, erfordert
+jedoch erheblichen Aufwand. Vortrainierte Transformer-Modelle bieten eine
+effiziente Alternative. Zur Auswahl standen BERT-base \cite{devlin2018bert},
+RoBERTa, DistilBERT \cite{sanh2019distilbert} sowie das speziell für
+Sternebewertungen trainierte nlptown-Modell. Aufgrund der kürzeren
+Trainingszeit wurde DistilBERT für das Fine-Tuning ausgewählt.
+
+\subsubsection{DistilBERT mit 10.000 Trainingssamples}
+Da das Fine-Tuning von Transformer-Modellen rechenintensiv ist, wurde
+zunächst ein reduzierter Datensatz mit 10.000 Trainings-, 2.000 Validierungs-
+und 2.000 Testsamples verwendet. Im Gegensatz zu den klassischen Modellen
+erfordert DistilBERT keine aufwändige Vorverarbeitung: Der Tokenizer des
+Modells übernimmt die Zerlegung in Subwort-Einheiten, während lediglich
+HTML-Tags und URLs entfernt werden.
+
+Das Training erfolgte über fünf Epochen mit einer Lernrate von $2 \cdot 10^{-5}$,
+einer Batch-Größe von 32 und einem Warmup-Anteil von 10\%. Die detaillierten
+Ergebnisse sind in \Cref{tab:distilbert_10k} im Anhang aufgeführt.
+
+Mit einer Accuracy von 77,50\% und einem F1-Macro-Score von 0,55 liegt
+DistilBERT nur geringfügig über der Logistic Regression (76,77\% Accuracy,
+0,51 F1 Macro). Der moderate Unterschied erklärt sich durch die begrenzte
+Datenmenge: Vortrainierte Modelle profitieren zwar von ihrem Sprachverständnis,
+benötigen aber ausreichend Daten für eine effektive Feinabstimmung auf die
+Zieldomäne.
+
+
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
@@ -833,6 +861,26 @@ Positiv & 0,91 & 0,97 & 0,94 & 17.089 \\
 \midrule
 Accuracy & 76,77\% & 88,33\% & +11,56\% \\
 F1 Macro & 0,51 & 0,67 & +32\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Ergebnisse DistilBERT mit 10.000 Trainingssamples}
+\label{tab:distilbert_10k}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Rating} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\
+\midrule
+1 Stern & 0,69 & 0,81 & 0,75 & 235 \\
+2 Sterne & 0,34 & 0,16 & 0,22 & 88 \\
+3 Sterne & 0,41 & 0,45 & 0,43 & 144 \\
+4 Sterne & 0,52 & 0,38 & 0,44 & 275 \\
+5 Sterne & 0,89 & 0,93 & 0,91 & 1.258 \\
+\midrule
+\textbf{Accuracy} & \multicolumn{4}{c}{77,50\%} \\
+\textbf{F1 Macro} & \multicolumn{4}{c}{0,55} \\
 \bottomrule
 \end{tabular}
 \end{table}
