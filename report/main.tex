@@ -578,9 +578,58 @@ Unterschiede zwischen benachbarten Bewertungsstufen oft subtil sind.
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
+Das primäre Projektziel, verschiedene Klassifikationsansätze zur
+automatischen Sentiment-Erkennung zu entwickeln und systematisch zu
+vergleichen, wurde vollständig erreicht. Es wurden sowohl klassische
+Machine-Learning-Verfahren (Logistic Regression, Naive Bayes, SVM,
+Random Forest) als auch moderne Transformer-Architekturen (DistilBERT)
+implementiert und auf einem Datensatz von 150.000 Amazon-Rezensionen
+evaluiert.
+
+Das beste Ergebnis erzielte DistilBERT mit einer Accuracy von 80,91\%
+und einem F1-Macro-Score von 0,61. Die klassische Logistic Regression
+erreichte mit 76,77\% Accuracy eine konkurrenzfähige Baseline bei
+deutlich geringerem Trainingsaufwand. Die Reduktion auf drei
+Sentiment-Klassen (negativ, neutral, positiv) steigerte die Accuracy
+auf 88,33\%, was für viele praktische Anwendungsfälle ausreichend ist.
+
 \subsection{Kritische Reflexion und gewonnene Erkenntnisse}
+Das persistente Klassenungleichgewicht stellte die größte Herausforderung
+dar. Trotz verschiedener Strategien (Klassengewichtung, mehr Trainingsdaten)
+blieben die mittleren Bewertungsstufen (2, 3, 4 Sterne) mit F1-Scores
+zwischen 0,36 und 0,50 schwer zu klassifizieren. Dies liegt in der Natur
+der Aufgabe: Die sprachlichen Unterschiede zwischen benachbarten
+Bewertungsstufen sind oft subtil.
+
+Überraschend war das schwache Abschneiden des vortrainierten
+nlptown-Modells (70,80\% Accuracy), das trotz spezifischer Ausrichtung
+hinter allen trainierten Modellen zurückblieb.
+Dies unterstreicht die Bedeutung domänenspezifischen Fine-Tunings.
+
+Der Mehrwert von Deep Learning gegenüber klassischen Verfahren betrug
+etwa 4 Prozentpunkte bei der Accuracy, erforderte jedoch erheblich
+mehr Rechenressourcen (zwei Tage Training vs. Sekunden).
+
 \subsection{Verbesserungspotenziale und Optimierungsansätze}
+Mehrere Ansätze könnten die Klassifikationsleistung weiter verbessern:
+Die Evaluation alternativer Transformer-Modelle wie RoBERTa oder
+BERT-base könnte höhere Accuracy-Werte ermöglichen. Data Augmentation
+durch Paraphrasierung oder Übersetzung könnte die unterrepräsentierten
+Klassen stärken. Eine Erweiterung des Datensatzes um weitere
+Produktkategorien würde die Generalisierungsfähigkeit verbessern.
+
+Für den praktischen Einsatz wäre eine Optimierung der Inferenzzeit
+durch Modellkomprimierung oder Quantisierung sinnvoll. Zudem könnte
+ein Ensemble aus klassischen und Transformer-Modellen die Stärken
+beider Ansätze kombinieren.
+
 \subsection{Ausblick}
+Das entwickelte System ist grundsätzlich für den Produktiveinsatz
+geeignet. Für Anwendungen, bei denen eine grobe Sentiment-Einschätzung
+ausreicht, bietet die 3-Klassen-Variante mit 88,33\% Accuracy ein
+gutes Kosten-Nutzen-Verhältnis. Für feingranulare Analysen empfiehlt
+sich das DistilBERT-Modell trotz höherer Anforderungen.
+
 \newpage
 
 \printbibliography
