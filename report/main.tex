@@ -543,6 +543,38 @@ Datenmenge: Vortrainierte Modelle profitieren zwar von ihrem Sprachverständnis,
 benötigen aber ausreichend Daten für eine effektive Feinabstimmung auf die
 Zieldomäne.
 
+\subsubsection{Vortrainiertes Sentiment-Modell (Zero-Shot)}
+Als Alternative zum Fine-Tuning wurde das Modell
+\texttt{nlptown/bert-base-multilingual-uncased-sentiment} evaluiert,
+das speziell auf Produktrezensionen vortrainiert wurde.
+Dieses Zero-Shot-Szenario erfordert kein eigenes
+Training und ermöglicht eine direkte Anwendung auf neue Daten.
+
+Überraschenderweise erreichte das vortrainierte Modell mit 70,80\% Accuracy
+und einem F1-Macro-Score von 0,57 schlechtere Ergebnisse als erwartet.
+Sowohl die Logistic Regression (76,77\%) als auch das feinabgestimmte
+DistilBERT (77,50\%) erzielten höhere Accuracy-Werte.
+\Cref{tab:neural_comparison} im Anhang zeigt den Vergleich.
+
+\subsubsection{DistilBERT mit 105.000 Trainingssamples}
+Um das volle Potenzial des Transformer-Modells auszuschöpfen, wurde
+abschließend ein Training auf einem Datensatz mit 105.000
+Trainingssamples durchgeführt. Die Konfiguration wurde
+für GPU-Training optimiert: Batch-Größe 32, fünf Epochen, FP16-Präzision
+für schnellere Berechnung und 10\% Warmup-Phase. Das Training dauerte
+etwa zwei Tage auf einer NVIDIA RTX 3060.
+
+Mit einer Accuracy von 80,91\% und einem F1-Macro-Score von 0,61 erreichte
+dieses Modell die besten Ergebnisse aller evaluierten Ansätze. Gegenüber
+der Logistic Regression entspricht dies einer Verbesserung von 4,1
+Prozentpunkten. Die detaillierten Ergebnisse sind in
+\Cref{tab:distilbert_105k} im Anhang aufgeführt.
+
+Auch bei diesem Modell bleiben die mittleren Klassen (2, 3, 4 Sterne)
+mit F1-Scores zwischen 0,36 und 0,50 schwierig zu klassifizieren.
+Dies ist typisch für 5-Klassen Sentiment-Analyse, da die sprachlichen
+Unterschiede zwischen benachbarten Bewertungsstufen oft subtil sind.
+
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
@@ -881,6 +913,44 @@ F1 Macro & 0,51 & 0,67 & +32\% \\
 \midrule
 \textbf{Accuracy} & \multicolumn{4}{c}{77,50\%} \\
 \textbf{F1 Macro} & \multicolumn{4}{c}{0,55} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Ergebnisse DistilBERT mit 105.000 Trainingssamples}
+\label{tab:distilbert_105k}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Rating} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\
+\midrule
+1 Stern & 0,77 & 0,78 & 0,77 & 2.720 \\
+2 Sterne & 0,43 & 0,31 & 0,36 & 1.144 \\
+3 Sterne & 0,47 & 0,53 & 0,50 & 1.547 \\
+4 Sterne & 0,59 & 0,41 & 0,48 & 2.642 \\
+5 Sterne & 0,90 & 0,96 & 0,93 & 14.447 \\
+\midrule
+\textbf{Accuracy} & \multicolumn{4}{c}{80,91\%} \\
+\textbf{F1 Macro} & \multicolumn{4}{c}{0,61} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Finale Ergebnis-Übersicht aller Modelle}
+\label{tab:neural_comparison}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Modell} & \textbf{Accuracy} & \textbf{F1 Macro} & \textbf{Training} \\
+\midrule
+Naive Bayes & 72,76\% & 0,51 & Sekunden \\
+SVM (LinearSVC) & 76,12\% & 0,50 & Sekunden \\
+Logistic Regression & 76,77\% & 0,51 & Sekunden \\
+BERT Pretrained (nlptown) & 70,80\% & 0,57 & -- \\
+DistilBERT (10k Samples) & 77,50\% & 0,55 & 3 Stunden \\
+DistilBERT (105k Samples) & 80,91\% & 0,61 & 2 Tage \\
 \bottomrule
 \end{tabular}
 \end{table}
