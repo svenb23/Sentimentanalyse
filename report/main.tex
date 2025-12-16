@@ -491,6 +491,30 @@ Die Wahl zwischen beiden Ansätzen hängt vom Anwendungsfall ab: Für maximale
 Gesamtgenauigkeit eignet sich das Standardmodell, für eine ausgeglichene
 Erkennung aller Sentiment-Stufen die gewichtete Variante.
 
+\subsubsection{Reduktion auf Sentiment-Polarität}
+Als Alternative zur feingranularen 5-Klassen-Klassifikation wurde eine
+Aggregation zu drei Sentiment-Kategorien evaluiert: negativ (1--2 Sterne),
+neutral (3 Sterne) und positiv (4--5 Sterne). 
+
+Die Ergebnisse zeigen eine erhebliche Verbesserung gegenüber der
+5-Klassen-Klassifikation. Logistic Regression erreichte mit der
+3-Klassen-Variante eine Accuracy von 88,33\% im Vergleich zu 76,77\% bei
+fünf Klassen. Der F1-Macro-Score stieg von 0,51 auf 0,67, was einer
+relativen Verbesserung von etwa 32\% entspricht.
+
+Die klassenspezifische Analyse offenbart dabei unterschiedliche
+Erkennungsraten: Positive Bewertungen werden mit einem F1-Score von 0,94
+nahezu perfekt klassifiziert, negative Bewertungen erreichen einen soliden
+F1-Score von 0,77. Lediglich die neutrale Klasse bleibt mit einem F1-Score
+von 0,29 problematisch, was auf ihren geringen Anteil von nur 6,9\% am
+Datensatz und die inhärente Schwierigkeit der Abgrenzung zu positiven
+und negativen Bewertungen zurückzuführen ist.
+
+Die Ergebnisse sind über alle Produktkategorien hinweg konsistent: Automotive
+erreichte 89,00\%, Video Games 88,27\% und Pet Supplies 87,73\% Accuracy.
+Diese gleichmäßige Leistung deutet auf eine gute Generalisierungsfähigkeit
+des Modells hin. Die detaillierten Ergebnisse sind in
+\Cref{tab:sentiment_polarity} im Anhang aufgeführt.
 
 \section{Fazit}
 \subsection{Zielerreichung und Projektergebnisse}
@@ -777,6 +801,38 @@ Random Forest & 71,75\% & 66,98\% & 0,384 & 0,464 \\
 3 Sterne & 425 & 81 & 405 & 357 & 279 \\
 4 Sterne & 296 & 55 & 173 & 1170 & 948 \\
 5 Sterne & 1403 & 131 & 277 & 1587 & 11049 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Ergebnisse der 3-Klassen Sentiment-Polarität}
+\label{tab:sentiment_polarity}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Klasse} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\
+\midrule
+Negativ & 0,79 & 0,76 & 0,77 & 3.864 \\
+Neutral & 0,64 & 0,19 & 0,29 & 1.547 \\
+Positiv & 0,91 & 0,97 & 0,94 & 17.089 \\
+\midrule
+\textbf{Accuracy} & \multicolumn{4}{c}{88,33\%} \\
+\textbf{F1 Macro} & \multicolumn{4}{c}{0,67} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vergleich: 5-Klassen vs. 3-Klassen Sentiment-Polarität}
+\label{tab:sentiment_comparison}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metrik} & \textbf{5-Klassen (1--5)} & \textbf{3-Klassen (Sentiment)} & \textbf{Verbesserung} \\
+\midrule
+Accuracy & 76,77\% & 88,33\% & +11,56\% \\
+F1 Macro & 0,51 & 0,67 & +32\% \\
 \bottomrule
 \end{tabular}
 \end{table}
