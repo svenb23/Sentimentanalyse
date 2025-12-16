@@ -131,7 +131,20 @@
 \section*{Abkürzungsverzeichnis}
 \addcontentsline{toc}{section}{Abkürzungsverzeichnis}
 \begin{acronym}[DistilBERT]
-    \acro{API}{Application Programming Interface}
+    \acro{BERT}{Bidirectional Encoder Representations from Transformers}
+    \acro{CPU}{Central Processing Unit}
+    \acro{CUDA}{Compute Unified Device Architecture}
+    \acro{FP16}{16-bit Floating Point}
+    \acro{GPU}{Graphics Processing Unit}
+    \acro{HTML}{Hypertext Markup Language}
+    \acro{JSON}{JavaScript Object Notation}
+    \acro{JSONL}{JSON Lines}
+    \acro{NLP}{Natural Language Processing}
+    \acro{NLTK}{Natural Language Toolkit}
+    \acro{SVM}{Support Vector Machine}
+    \acro{TF-IDF}{Term Frequency-Inverse Document Frequency}
+    \acro{URL}{Uniform Resource Locator}
+    \acro{VRAM}{Video Random Access Memory}
 \end{acronym}
 \newpage
 
@@ -145,9 +158,9 @@ schnellen Überblick zu bekommen, als auch für Unternehmen, um Feedback systema
 So werden täglich Millionen von Nutzermeinungen erzeugt, deren manuelle Analyse
 längst nicht mehr praktikabel ist. Die automatisierte
 Sentimentanalyse von Produktrezensionen stellt dabei eine zentrale Herausforderung
-im Bereich des Natural Language Processing dar, deren Bewältigung für Unternehmen
+im Bereich des \ac{NLP} dar, deren Bewältigung für Unternehmen
 maßgeblich zur Produktverbesserung und Kundenzufriedenheitsanalyse beiträgt.
-Vor diesem Hintergrund wurde im Rahmen des Moduls „Projekt: NLP" an der IU
+Vor diesem Hintergrund wurde im Rahmen des Moduls „Projekt: \acs{NLP}" an der IU
 Internationalen Hochschule ein umfassendes System zur Sentimentanalyse von
 Amazon-Produktbewertungen entwickelt, das sowohl klassische
 Machine-Learning-Verfahren als auch moderne Transformer-Architekturen systematisch
@@ -170,11 +183,11 @@ sowohl eine 5-Klassen-Klassifikation als auch eine aggregierte
 Die methodische Vorgehensweise gliederte sich in mehrere aufeinander aufbauende
 Phasen. Nach einer initialen Datenaufbereitung mit Textbereinigung,
 Lemmatisierung und Stopwort-Entfernung erfolgte zunächst die Implementierung
-klassischer Modelle unter Verwendung von TF-IDF-Vektorisierung mit
-bis zu 20.000 Features. Hierbei wurden Logistic Regression, Naive Bayes, SVM,
-Random Forest und Gradient Boosting systematisch evaluiert. Parallel dazu wurde 
-ein Fine-Tuning des DistilBERT-Modells auf dem vollständigen Trainingsdatensatz 
-durchgeführt sowie ein vortrainiertes BERT-Modell für Sentimentanalyse im 
+klassischer Modelle unter Verwendung von \ac{TF-IDF}-Vektorisierung mit
+bis zu 20.000 Features. Hierbei wurden Logistic Regression, Naive Bayes, \ac{SVM},
+Random Forest und Gradient Boosting systematisch evaluiert. Parallel dazu wurde
+ein Fine-Tuning des DistilBERT-Modells auf dem vollständigen Trainingsdatensatz
+durchgeführt sowie ein vortrainiertes \ac{BERT}-Modell für Sentimentanalyse im
 Zero-Shot-Modus getestet.
 
 Der vorliegende Projektbericht dokumentiert systematisch den gesamten
@@ -194,12 +207,12 @@ Zu Projektbeginn standen drei Alternativen zur Verfügung: ein MacBook Pro mit A
 ein Windows-PC mit NVIDIA RTX 3060 sowie verschiedene Cloud-Computing-Anbieter.
 
 Für das Training der klassischen Machine-Learning-Modelle wie Logistic Regression,
-Naive Bayes und SVM war sowohl das MacBook als auch der Windows-PC ausreichend,
-da diese Verfahren primär CPU-basiert arbeiten. Für das Fine-Tuning der BERT-Modelle
-schied das MacBook jedoch aufgrund der fehlenden CUDA-Unterstützung aus.
+Naive Bayes und \acs{SVM} war sowohl das MacBook als auch der Windows-PC ausreichend,
+da diese Verfahren primär \ac{CPU}-basiert arbeiten. Für das Fine-Tuning der \acs{BERT}-Modelle
+schied das MacBook jedoch aufgrund der fehlenden \ac{CUDA}-Unterstützung aus.
 
 Das Training wurde daher auf dem Windows-11-Computer (Intel i7-12700K, 32 GB DDR5,
-NVIDIA RTX 3060 mit 12 GB VRAM) durchgeführt. Da selbst das längste Training
+NVIDIA RTX 3060 mit 12 GB \ac{VRAM}) durchgeführt. Da selbst das längste Training
 (DistilBERT auf 105.000 Samples) mit etwa zwei Tagen in einem akzeptablen Rahmen blieb,
 waren zusätzliche Cloud-Lösungen nicht erforderlich. 
 
@@ -227,7 +240,7 @@ Datensätzen entstand.
 \subsection{Datenanalyse}
 \subsubsection{Datensatzstruktur}
 In einem ersten Schritt wurden die Rohdaten untersucht und ihre Struktur analysiert.
-Die Rezensionen liegen im JSONL-Format vor, wobei jede Zeile einen JSON-Datensatz
+Die Rezensionen liegen im \ac{JSONL}-Format vor, wobei jede Zeile einen \ac{JSON}-Datensatz
 repräsentiert. \Cref{tab:json_fields} im Anhang zeigt die verfügbaren Felder und
 ihre Bedeutung.
 
@@ -250,8 +263,8 @@ sprachlichen Merkmale zu extrahieren.
 Die implementierte Pipeline verarbeitet jeden Rezensionstext in mehreren
 aufeinander aufbauenden Schritten: Zunächst werden \texttt{title} und
 \texttt{text} kombiniert und in Kleinbuchstaben konvertiert. Anschließend
-erfolgt die Bereinigung durch Entfernung von HTML-Tags, URLs, Zahlen und
-Satzzeichen. Der bereinigte Text wird mittels NLTK tokenisiert, wobei
+erfolgt die Bereinigung durch Entfernung von \ac{HTML}-Tags, \ac{URL}s, Zahlen und
+Satzzeichen. Der bereinigte Text wird mittels \ac{NLTK} tokenisiert, wobei
 englische Stoppwörter gefiltert und die verbleibenden Tokens durch den
 WordNetLemmatizer auf ihre Grundform zurückgeführt werden. Abschließend
 werden Tokens mit weniger als zwei Zeichen entfernt.
@@ -259,10 +272,10 @@ werden Tokens mit weniger als zwei Zeichen entfernt.
 \subsubsection{Feature-Extraktion}
 Für die Transformation der vorverarbeiteten Texte in numerische Vektoren stehen verschiedene
 Methoden zur Verfügung (\Cref{tab:feature_methods} im Anhang). Für die klassischen
-Machine-Learning-Modelle wurde \textbf{TF-IDF} (Term Frequency-Inverse Document Frequency)
-gewählt. Diese Entscheidung basiert auf mehreren Faktoren: TF-IDF ist für
-Sentiment-Klassifikation bewährt, ermöglicht schnelles Training ohne GPU und bietet
-Interpretierbarkeit. Die Konfiguration der TF-IDF-Vektorisierung ist in
+Machine-Learning-Modelle wurde \acs{TF-IDF} gewählt. Diese Entscheidung
+basiert auf mehreren Faktoren: \acs{TF-IDF} ist für Sentiment-Klassifikation bewährt,
+ermöglicht schnelles Training ohne \ac{GPU} und bietet Interpretierbarkeit.
+Die Konfiguration der \acs{TF-IDF}-Vektorisierung ist in
 \Cref{tab:tfidf_config} im Anhang dokumentiert.
 
 Die Verwendung von Bigrammen ermöglicht die Erfassung von Wortpaaren wie „not good''
@@ -275,29 +288,22 @@ Um einen fundierten Vergleich zwischen klassische Machine-Learning-Verfahren und
 wurden folgende Modelle evaluiert.
 
 \subsubsection{Klassische Machine-Learning-Modelle}
-Als Baseline dienten etablierte Klassifikationsverfahren in Kombination mit TF-IDF-Vektorisierung.
-Die Term Frequency-Inverse Document Frequency (TF-IDF) transformiert Texte in numerische Vektoren, wobei häufig vorkommende,
+Als Baseline dienten etablierte Klassifikationsverfahren in Kombination mit \acs{TF-IDF}-Vektorisierung.
+\acs{TF-IDF} transformiert Texte in numerische Vektoren, wobei häufig vorkommende,
 aber wenig aussagekräftige Wörter herabgewichtet werden.
 
-Folgende Modelle wurden implementiert und evaluiert:
-\begin{itemize}
-    \item \textbf{Logistic Regression}: Bei der logistischen Regression wird eine S-förmige logistische Funktion (Sigmoidfunktion) an die Daten gefittet, wobei der Ausgabewert die Wahrscheinlichkeit einer bestimmten Klassenzugehörigkeit ausdrückt \parencite{iu2025supervised}.
-    \item \textbf{Naive Bayes}: Dieser Klassifikator beruht auf dem Satz von Bayes und geht von der Annahme aus, dass die Verteilungen der berücksichtigten Merkmale voneinander unabhängig sind \parencite{iu2025supervised}.
-    \item \textbf{Support Vector Machine (LinearSVC)}: Das Verfahren basiert auf der Einpassung einer Klassifizierungsgrenze (Hyperebene) in den hochdimensionalen Feature-Raum, wobei neue Beobachtungen je nach Position relativ zur Hyperebene klassifiziert werden \parencite{iu2025supervised}.
-    \item \textbf{Random Forest}: Diese Ensemble-Methode bündelt einzelne Entscheidungsbäume durch Bagging zu einem starken Schätzer, dessen Vorhersage durch Aggregation der Einzelvorhersagen ermittelt wird \parencite{iu2025supervised}.
-    \item \textbf{Gradient Boosting}: Im Gegensatz zu Random Forest erfolgt das Training der Entscheidungsbäume sequenziell, wobei jeder Schätzer die Fehler des vorherigen korrigiert \parencite{iu2025supervised}.
-\end{itemize}
+Folgende Modelle wurden implementiert \parencite{iu2025supervised}: \textit{Logistic Regression} fittet eine Sigmoidfunktion zur Klassenzugehörigkeits-Wahrscheinlichkeit. \textit{Naive Bayes} nutzt den Satz von Bayes unter Annahme unabhängiger Merkmale. \textit{\acs{SVM} (LinearSVC)} klassifiziert durch eine Hyperebene im Feature-Raum. \textit{Random Forest} aggregiert mehrere Entscheidungsbäume via Bagging. \textit{Gradient Boosting} trainiert Bäume sequenziell zur Fehlerkorrektur.
 
-Die TF-IDF-Vektorisierung wurde mit bis zu 20.000 Features und Uni- sowie Bigrammen konfiguriert. Zusätzlich wurde eine Textvorverarbeitung mit Kleinschreibung, Entfernung von HTML-Tags, URLs und Sonderzeichen sowie Lemmatisierung durchgeführt.
+Die \acs{TF-IDF}-Vektorisierung wurde mit bis zu 20.000 Features und Uni- sowie Bigrammen konfiguriert. Zusätzlich wurde eine Textvorverarbeitung mit Kleinschreibung, Entfernung von \acs{HTML}-Tags, \acs{URL}s und Sonderzeichen sowie Lemmatisierung durchgeführt.
 
 \subsubsection{Transformer-basierte Modelle}
-Für den Vergleich mit modernen Deep-Learning-Ansätzen wurden zwei BERT-basierte Modelle ausgewählt:
+Für den Vergleich mit modernen Deep-Learning-Ansätzen wurden zwei \acs{BERT}-basierte Modelle ausgewählt:
 
-\textbf{DistilBERT} \cite{sanh2019distilbert} ist eine komprimierte Version des ursprünglichen BERT-Modells \cite{devlin2018bert},
-die durch Knowledge Distillation erzeugt wurde. Mit 66 Millionen Parametern ist DistilBERT etwa 40\% kleiner als BERT, behält jedoch 97\%
+DistilBERT \cite{sanh2019distilbert} ist eine komprimierte Version des ursprünglichen \acs{BERT}-Modells \cite{devlin2018bert},
+die durch Knowledge Distillation erzeugt wurde. Mit 66 Millionen Parametern ist DistilBERT etwa 40\% kleiner als \acs{BERT}, behält jedoch 97\%
 der Sprachverständnisfähigkeiten bei. Diese Eigenschaften machen DistilBERT besonders geeignet für Projekte mit begrenzten Hardwareressourcen.
 
-Als zweiter Ansatz wurde ein \textbf{vortrainiertes BERT-Modell für Sentimentanalyse} (nlptown/bert-base-multilingual-uncased-sentiment)
+Als zweiter Ansatz wurde ein vortrainiertes \acs{BERT}-Modell für Sentimentanalyse (nlptown/bert-base-multilingual-uncased-sentiment)
 im Zero-Shot-Modus getestet. Dieses Modell wurde bereits auf Produktbewertungen trainiert und ermöglicht eine Klassifikation
 ohne zusätzliches Fine-Tuning auf dem eigenen Datensatz.
 
@@ -330,7 +336,7 @@ aufeinander aufbauenden Komponenten besteht.
 Die erste Komponente bildet das Preprocessing-Modul, das die
 Rohtexte für die maschinelle Verarbeitung vorbereitet. Folgende
 Verarbeitungsschritte können dabei flexibel aktiviert oder deaktiviert werden:
-Konvertierung zu Kleinbuchstaben, Entfernung von HTML-Tags, URLs, Zahlen
+Konvertierung zu Kleinbuchstaben, Entfernung von \acs{HTML}-Tags, \acs{URL}s, Zahlen
 und Satzzeichen sowie die Filterung englischer Stoppwörter. Für die
 Wortnormalisierung stehen zwei Alternativen zur Verfügung: der Porter Stemmer,
 der Wörter auf ihren Stamm reduziert, sowie der WordNet Lemmatizer, der
@@ -339,7 +345,7 @@ Token-Länge definiert werden, um sehr kurze Wortfragmente auszuschließen.
 
 Die zweite Komponente umfasst die Feature-Extraktion, die den
 vorverarbeiteten Text in numerische Vektoren transformiert. Hierbei kann
-zwischen TF-IDF-Vektorisierung und einfacher Count-Vektorisierung (Bag-of-Words)
+zwischen \acs{TF-IDF}-Vektorisierung und einfacher Count-Vektorisierung (Bag-of-Words)
 gewählt werden. Die Anzahl der Features ist zwischen 5.000 und 20.000
 konfigurierbar. Durch die Einstellung der N-Gramm-Range lassen sich
 ausschließlich Unigramme, zusätzlich Bigramme oder auch Trigramme
@@ -500,7 +506,7 @@ DistilBERT (77,50\%) erzielten höhere Accuracy-Werte.
 Um das volle Potenzial des Transformer-Modells auszuschöpfen, wurde
 abschließend ein Training auf einem Datensatz mit 105.000
 Trainingssamples durchgeführt. Die Konfiguration wurde
-für GPU-Training optimiert: Batch-Größe 32, fünf Epochen, FP16-Präzision
+für GPU-Training optimiert: Batch-Größe 32, fünf Epochen, \ac{FP16}-Präzision
 für schnellere Berechnung und 10\% Warmup-Phase. Das Training dauerte
 etwa zwei Tage auf einer NVIDIA RTX 3060.
 
@@ -521,7 +527,7 @@ Unterschiede zwischen benachbarten Bewertungsstufen oft subtil sind.
 Das primäre Projektziel, verschiedene Klassifikationsansätze zur
 automatischen Sentiment-Erkennung zu entwickeln und systematisch zu
 vergleichen, wurde vollständig erreicht. Es wurden sowohl klassische
-Machine-Learning-Verfahren (Logistic Regression, Naive Bayes, SVM,
+Machine-Learning-Verfahren (Logistic Regression, Naive Bayes, \acs{SVM},
 Random Forest) als auch moderne Transformer-Architekturen (DistilBERT)
 implementiert und auf einem Datensatz von 150.000 Amazon-Rezensionen
 evaluiert.
